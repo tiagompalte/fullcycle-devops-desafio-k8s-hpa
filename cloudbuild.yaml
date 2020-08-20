@@ -2,5 +2,5 @@ steps:
   - id: go_test
     name: 'gcr.io/cloud-builders/go'
     args: ['test','fullcycle-devops-desafio-k8s-hpa']
-    env: ['PROJECT_ROOT=fullcycle-devops-desafio-k8s-hpa', 'GOPATH=./desafio-go']
+    env: ['PROJECT_ROOT=fullcycle-devops-desafio-k8s-hpa', 'GOPATH=.']
 
