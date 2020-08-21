@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: go-hpa
-        image: tiagompalte/go-hpa:latest
+        image: img-deployment
         ports:
           - containerPort: 8000
 
