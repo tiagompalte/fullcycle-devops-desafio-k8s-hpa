@@ -1,0 +1,33 @@
+steps:
+  - id: go_test
+    name: 'gcr.io/cloud-builders/go'
+    args: ['test','fullcycle-devops-desafio-k8s-hpa']
+    env: ['PROJECT_ROOT=fullcycle-devops-desafio-k8s-hpa', 'GOPATH=.']
+
+  - id: 'Building image from Dockerfile'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['build','-t','gcr.io/$PROJECT_ID/go-hpa:$SHORT_SHA','-f','Dockerfile','.']
+
+  - id: 'Pushing image'
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['push','gcr.io/$PROJECT_ID/go-hpa:$SHORT_SHA']
+
+  - id: 'Adjusting deployment file k8s'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: '/bin/sh'
+    args:
+      - '-c'
+      - |
+        sed 's#img-deployment#gcr.io/$PROJECT_ID/go-hpa:$SHORT_SHA#g' deployment.yaml > deployment-new.yaml;
+        cat k8s/app/deployment-new.yaml;
+
+  - id: 'Deploying k8s'
+    name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'apply'
+      - '-f'
+      - 'deployment-new.yaml'
+    env:
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-cd-laravel'
+
